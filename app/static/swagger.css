@@ -1,0 +1,31 @@
+/* Swagger UI screenshot-friendly layout: reduce scrolling. */
+
+/* Make request body "Example Value" and "Schema" blocks expand. */
+.swagger-ui .microlight,
+.swagger-ui .highlight-code {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Make parameter/model boxes less scroll-heavy. */
+.swagger-ui .model-box,
+.swagger-ui .model-box-control,
+.swagger-ui .model {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Make request body editors taller. */
+.swagger-ui .body-param__text,
+.swagger-ui .body-param textarea {
+  min-height: 520px !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Avoid collapsing code blocks into tiny areas. */
+.swagger-ui pre {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
