@@ -4,6 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from .. import models
+from .persistence import commit_or_flush_and_refresh
 
 
 def get_doctor_profile_by_user_id(db: Session, user_id: int) -> models.DoctorProfile | None:
@@ -14,8 +15,7 @@ def get_doctor_profile_by_user_id(db: Session, user_id: int) -> models.DoctorPro
 def update_doctor_schedule_json(db: Session, doctor: models.DoctorProfile, schedule_json: str) -> None:
     doctor.schedule_json = schedule_json
     db.add(doctor)
-    db.commit()
-    db.refresh(doctor)
+    commit_or_flush_and_refresh(db, doctor, commit=True)
 
 
 def create_doctor_profile(
@@ -28,10 +28,4 @@ def create_doctor_profile(
 ) -> models.DoctorProfile:
     profile = models.DoctorProfile(user_id=user_id, address=address, schedule_json=schedule_json)
     db.add(profile)
-    if commit:
-        db.commit()
-        db.refresh(profile)
-    else:
-        db.flush()
-        db.refresh(profile)
-    return profile
+    return commit_or_flush_and_refresh(db, profile, commit=commit)

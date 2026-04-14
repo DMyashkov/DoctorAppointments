@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from .. import models
+from .persistence import commit_or_flush, commit_or_flush_and_refresh
 
 
 def get_temporary_schedule_change_by_doctor_user_id(
@@ -34,10 +35,7 @@ def replace_temporary_schedule_change(
         schedule_json=schedule_json,
     )
     db.add(change)
-    if commit:
-        db.commit()
-    else:
-        db.flush()
+    commit_or_flush(db, commit=commit)
 
 
 def find_permanent_schedule_change_for_doctor_on_date(
@@ -70,13 +68,7 @@ def create_permanent_schedule_change(
         created_at=created_at,
     )
     db.add(change)
-    if commit:
-        db.commit()
-        db.refresh(change)
-    else:
-        db.flush()
-        db.refresh(change)
-    return change
+    return commit_or_flush_and_refresh(db, change, commit=commit)
 
 
 def get_latest_permanent_schedule_change_on_or_before(

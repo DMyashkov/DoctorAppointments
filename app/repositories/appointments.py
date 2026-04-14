@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from .. import models
 from ..enums import AppointmentStatus
+from .persistence import commit_or_flush_and_refresh
 
 
 def get_appointment_by_id(db: Session, appointment_id: int) -> models.Appointment | None:
@@ -54,21 +55,9 @@ def create_appointment(
         status=status,
     )
     db.add(appt)
-    if commit:
-        db.commit()
-        db.refresh(appt)
-    else:
-        db.flush()
-        db.refresh(appt)
-    return appt
+    return commit_or_flush_and_refresh(db, appt, commit=commit)
 
 
 def save_appointment(db: Session, appt: models.Appointment, *, commit: bool = True) -> models.Appointment:
     db.add(appt)
-    if commit:
-        db.commit()
-        db.refresh(appt)
-    else:
-        db.flush()
-        db.refresh(appt)
-    return appt
+    return commit_or_flush_and_refresh(db, appt, commit=commit)

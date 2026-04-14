@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from .. import models
 from ..enums import UserRole
+from .persistence import commit_or_flush_and_refresh
 
 
 def get_user_by_email(db: Session, email: str) -> models.User | None:
@@ -26,10 +27,4 @@ def create_user(
 ) -> models.User:
     user = models.User(email=email, name=name, password_hash=password_hash, role=role)
     db.add(user)
-    if commit:
-        db.commit()
-        db.refresh(user)
-    else:
-        db.flush()
-        db.refresh(user)
-    return user
+    return commit_or_flush_and_refresh(db, user, commit=commit)
